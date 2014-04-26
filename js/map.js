@@ -3,12 +3,15 @@
     L.tileLayer('https://{s}.tiles.mapbox.com/v3/derekeder.hehblhbj/{z}/{x}/{y}.png', {
         attribution: '<a href="http://www.mapbox.com/about/maps/" target="_blank">Terms &amp; Feedback</a>'
     }).addTo(map);
-    var endpoint = 'http://127.0.0.1:5000/api'
+    //var endpoint = 'http://127.0.0.1:5000/api'
+    var endpoint = 'http://wopr.datamade.us/api'
     var dataset = 'chicago_crimes_all';
     var year = 2013
     var resolution = 0.01;
+    $('#map').spin('large')
     $.when(getGrid(year, dataset, resolution)).then(
         function(grid){
+            $('#map').spin(false);
             L.geoJson(grid, {
                 pointToLayer: function(feature, latlng){
                     var size = feature.properties.count / 250;
