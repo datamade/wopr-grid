@@ -35,6 +35,7 @@
                         })
                     }
                 }).addTo(map);
+                $('#dataset-name').text(grid_data['human_name']);
             }
         );
     }
@@ -64,6 +65,7 @@
                 $('.meta').html(tpl.render(data));
                 $('#dataset-picker').on('change', function(e){
                     grid_data['dataset'] = $(this).val();
+                    grid_data['human_name'] = $(this).find(':selected').text();
                     loadLayer(grid_data);
                 })
                 $('#year-picker').on('change', function(e){
