@@ -42,6 +42,10 @@ h1, h2, h3, #deed-online, #deed-in-person { padding-top: 70px; margin-top: -70px
     padding: 10px;
 }
 .meta {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    z-index: 1001;
     padding: 6px 8px;
     font: 14px/16px Arial, Helvetica, sans-serif;
     background: white;
@@ -52,6 +56,10 @@ h1, h2, h3, #deed-online, #deed-in-person { padding-top: 70px; margin-top: -70px
 .meta h4 {
     margin: 0 0 5px;
     color: #777;
+}
+
+.meta select {
+    z-index: 1001;
 }
 
 .legend {

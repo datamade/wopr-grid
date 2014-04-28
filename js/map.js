@@ -1,44 +1,17 @@
 (function(){
     var endpoint = 'http://wopr.datamade.us/api'
     var map = L.map('map').fitBounds([[41.644286009999995, -87.94010087999999], [42.023134979999995, -87.52366115999999]]);
-    L.tileLayer('https://{s}.tiles.mapbox.com/v3/derekeder.hehblhbj/{z}/{x}/{y}.png', {
+    L.tileLayer('https://{s}.tiles.mapbox.com/v3/datamade.hn83a654/{z}/{x}/{y}.png', {
         attribution: '<a href="http://www.mapbox.com/about/maps/" target="_blank">Terms &amp; Feedback</a>'
     }).addTo(map);
-    var meta = L.control({position: 'bottomright'});
     var grid_data = {
         year: 2013,
         dataset: 'chicago_crimes_all',
         human_name: 'Crimes - 2001 to present',
         resolution: 0.01,
     }
-    meta.onAdd = function(map){
-        this._div = L.DomUtil.create('div', 'meta');
-        return this._div;
-    }
-    meta.update = function(grid_data){
-        $(this._div).spin('large');
-        var self = this;
-        var tpl = new EJS({text: $('#metaControl').html()})
-        $.when($.getJSON(endpoint + '/')).then(
-            function(datasets){
-                $(self._div).spin(false);
-                var data = {
-                    human_name: grid_data['human_name'],
-                    year: grid_data['year'],
-                    datasets: []
-                }
-                $.each(datasets, function(i, set){
-                    data['datasets'].push(set);
-                });
-                $(self._div).html(tpl.render(data));
-              //$('#dataset-picker').on('change', function(e){
-              //    console.log($(this).val());
-              //})
-            }
-        )
-    }
-    meta.addTo(map);
-    meta.update(grid_data);
+    var grid_layer;
+    metaUpdate(grid_data);
     loadLayer(grid_data);
     function loadLayer(grid_data){
         $('#map').spin('large');
@@ -46,7 +19,10 @@
         $.when(getGrid(url, grid_data['dataset'], grid_data['resolution'])).then(
             function(grid){
                 $('#map').spin(false);
-                L.geoJson(grid, {
+                if (typeof grid_layer !== 'undefined'){
+                    map.removeLayer(grid_layer);
+                }
+                grid_layer = L.geoJson(grid, {
                     pointToLayer: function(feature, latlng){
                         var size = feature.properties.count / 250;
                         return  L.circleMarker(latlng).setRadius(size);
@@ -69,5 +45,36 @@
             resolution: resolution
         }
         return $.getJSON(url, data)
+    }
+    function metaUpdate(grid_data){
+        $('.meta').spin('large');
+        var tpl = new EJS({text: $('#metaControl').html()})
+        $.when($.getJSON(endpoint + '/')).then(
+            function(datasets){
+                $(self._div).spin(false);
+                var data = {
+                    human_name: grid_data['human_name'],
+                    year: grid_data['year'],
+                    datasets: [],
+                    resolution: grid_data['resolution']
+                }
+                $.each(datasets, function(i, set){
+                    data['datasets'].push(set);
+                });
+                $('.meta').html(tpl.render(data));
+                $('#dataset-picker').on('change', function(e){
+                    grid_data['dataset'] = $(this).val();
+                    loadLayer(grid_data);
+                })
+                $('#year-picker').on('change', function(e){
+                    grid_data['year'] = $(this).val();
+                    loadLayer(grid_data);
+                })
+                $('#resolution-picker').on('change', function(e){
+                    grid_data['resolution'] = $(this).val();
+                    loadLayer(grid_data);
+                })
+            }
+        )
     }
 })()
