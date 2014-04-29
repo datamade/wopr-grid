@@ -11,6 +11,7 @@
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/font-awesome.css" rel="stylesheet">
     <link href="css/leaflet.css" rel="stylesheet">
+    <link href="css/leaflet.label.css" rel="stylesheet">
 
     <link href="css/custom.css" rel="stylesheet">
 
@@ -43,9 +44,9 @@
     <script type="text/ejs" id="metaControl">
         <div>
             <h4 id="dataset-name" class="light"><%= human_name %></h4>
-            <form class="form-inline" role="form">
+            <form class="form" role="form">
                 <div class="form-group">
-                    <label for="dataset-picker" class="sr-only">Pick another dataset: </label>
+                    <label for="dataset-picker">Pick another dataset: </label>
                     <select id="dataset-picker" class="form-control">
                         <% $.each(datasets, function(i, dataset){ %>
                           <option value="<%= dataset.dataset_name %>" <% if(dataset.human_name === human_name) { %> " selected=true" <% } %>>
@@ -55,7 +56,7 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="year-picker" class="sr-only">Pick another year: </label>
+                    <label for="year-picker">Pick another year: </label>
                     <select id="year-picker" class="form-control">
                         <% var years = [2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013]%>
                         <% $.each(years, function(i, y){ %>
@@ -66,11 +67,11 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="resolution-picker" class="sr-only">Pick another resolution: </label>
+                    <label for="resolution-picker">Pick another resolution: </label>
                     <select id="resolution-picker" class="form-control">
-                        <% var resolutions = [0.005, 0.01, 0.05]%>
+                        <% var resolutions = {0.00555: '~500m', 0.008325: '~750m', 0.0111: '~1km', 0.0222: '~2km', 0.0333: '~3km', 0.0444: '~4km', 0.0555: '~5km'} %>
                         <% $.each(resolutions, function(i, r){ %>
-                            <option value="<%= r %>"<% if(r === resolution){ %> " selected=true" <% } %>>
+                            <option value="<%= i %>"<% if(parseFloat(i) === resolution){ %> " selected=true" <% } %>>
                                 <%= r %>
                             </option>
                         <% }) %>
@@ -85,6 +86,8 @@
     <script src="js/ejs_production.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/leaflet.js" type="text/javascript"></script>
+    <script src="js/leaflet.label.js" type="text/javascript"></script>
+    <script src="js/jenks.js" type="text/javascript"></script>
     <script src="js/map.js" type="text/javascript"></script>
 
   </body>
