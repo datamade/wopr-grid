@@ -11,6 +11,8 @@
         dataset: 'chicago_crimes_all',
         human_name: 'Crimes - 2001 to present',
         resolution: 0.0111,
+        obs_from: '2001-01-01',
+        obs_to: moment().subtract('days', 7).format('YYYY-MM-DD')
     }
     var legend = L.control({position: 'bottomleft'});
     legend.onAdd = function(map){
@@ -48,28 +50,30 @@
                 $.each(grid['features'], function(i, val){
                     values.push(val['properties']['count']);
                 });
-                jenks_cutoffs = jenks(values, 6);
-                jenks_cutoffs[0] = 0;
-                jenks_cutoffs.pop();
+                try{legend.removeFrom(map);}catch(e){};
                 if (typeof grid_layer !== 'undefined'){
                     map.removeLayer(grid_layer);
                 }
-                grid_layer = L.geoJson(grid, {
-                    pointToLayer: function(feature, latlng){
-                        var res = grid_data['resolution'] / 2;
-                        var sw = [latlng.lat + res, latlng.lng - res]
-                        var ne = [latlng.lat - res, latlng.lng + res]
-                        var style = styleGrid(feature)
-                        return  L.rectangle([sw, ne], style);
-                    },
-                    onEachFeature: function(feature, layer){
-                        var content = '<h4>Count: ' + feature.properties.count + '</h4>';
-                        layer.bindLabel(content);
-                    }
-                }).addTo(map);
-                $('#dataset-name').text(grid_data['human_name']);
-                try{legend.removeFrom(map);}catch(e){};
-                legend.addTo(map);
+                if (values.length > 0){
+                    jenks_cutoffs = jenks(values, 6);
+                    jenks_cutoffs[0] = 0;
+                    jenks_cutoffs.pop();
+                    grid_layer = L.geoJson(grid, {
+                        pointToLayer: function(feature, latlng){
+                            var res = grid_data['resolution'] / 2;
+                            var sw = [latlng.lat + res, latlng.lng - res]
+                            var ne = [latlng.lat - res, latlng.lng + res]
+                            var style = styleGrid(feature)
+                            return  L.rectangle([sw, ne], style);
+                        },
+                        onEachFeature: function(feature, layer){
+                            var content = '<h4>Count: ' + feature.properties.count + '</h4>';
+                            layer.bindLabel(content);
+                        }
+                    }).addTo(map);
+                    $('#dataset-name').text(grid_data['human_name']);
+                    legend.addTo(map);
+                }
             }
         );
     }
@@ -108,30 +112,59 @@
         $.when($.getJSON(endpoint + '/')).then(
             function(datasets){
                 $(self._div).spin(false);
-                var data = {
-                    human_name: grid_data['human_name'],
-                    year: grid_data['year'],
-                    datasets: [],
-                    resolution: grid_data['resolution']
-                }
-                $.each(datasets, function(i, set){
-                    data['datasets'].push(set);
-                });
-                $('.meta').html(tpl.render(data));
+                grid_data['datasets'] = datasets;
+                var opts = makeYearPicker();
+                $('.meta').html(tpl.render(grid_data));
+                $('#year-picker').html(opts);
                 $('#dataset-picker').on('change', function(e){
                     grid_data['dataset'] = $(this).val();
-                    grid_data['human_name'] = $(this).find(':selected').text();
+                    grid_data['human_name'] = $('#dataset-picker').find(':selected').first().text().trim();
+                    var opts = makeYearPicker();
+                    $('#year-picker').html(opts);
+                    adjustYear();
                     loadLayer(grid_data);
                 })
                 $('#year-picker').on('change', function(e){
-                    grid_data['year'] = $(this).val();
+                    grid_data['year'] = parseInt($(this).val());
+                    adjustYear();
                     loadLayer(grid_data);
                 })
                 $('#resolution-picker').on('change', function(e){
-                    grid_data['resolution'] = $(this).val();
+                    grid_data['resolution'] = parseFloat($(this).val());
+                    adjustYear();
                     loadLayer(grid_data);
                 })
             }
         )
+    }
+    function makeYearPicker(){
+        $.each(grid_data['datasets'], function(i, set){
+            if(set['dataset_name'] === grid_data['dataset']){
+                grid_data['obs_from'] = set['obs_from'];
+                grid_data['obs_to'] = set['obs_to'];
+            }
+        });
+        var end = parseInt(moment(grid_data['obs_to']).format('YYYY')) + 1;
+        var start = parseInt(moment(grid_data['obs_from']).format('YYYY'));
+        var years = Number.range(start, end);
+        var opts = '';
+        $.each(years, function(i, y){
+            opts += '<option value="' + y + '"';
+            if(y === grid_data['year']){
+                opts += "selected=true";
+            }
+            opts += ">" + y + "</option>";
+        });
+        return opts;
+    }
+    function adjustYear(){
+        var to = parseInt(moment(grid_data['obs_to']).format('YYYY'));
+        var from = parseInt(moment(grid_data['obs_from']).format('YYYY'));
+        if(grid_data['year'] >= to ){
+            grid_data['year'] = to
+        }
+        if(grid_data['year'] <= from){
+            grid_data['year'] = from;
+        }
     }
 })()

@@ -49,7 +49,7 @@
                     <label for="dataset-picker">Pick another dataset: </label>
                     <select id="dataset-picker" class="form-control">
                         <% $.each(datasets, function(i, dataset){ %>
-                          <option value="<%= dataset.dataset_name %>" <% if(dataset.human_name === human_name) { %> " selected=true" <% } %>>
+                          <option value="<%= dataset.dataset_name %>" <% if(dataset.human_name === human_name) { %> selected=true <% } %>>
                                 <%= dataset.human_name %>
                             </option>
                         <% }) %>
@@ -57,21 +57,14 @@
                 </div>
                 <div class="form-group">
                     <label for="year-picker">Pick another year: </label>
-                    <select id="year-picker" class="form-control">
-                        <% var years = [2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013]%>
-                        <% $.each(years, function(i, y){ %>
-                          <option value="<%= y %>"<% if(y === year){ %> " selected=true"<% } %>>
-                              <%= y %>
-                          </option>
-                        <% }) %>
-                    </select>
+                    <select id="year-picker" class="form-control"></select>
                 </div>
                 <div class="form-group">
                     <label for="resolution-picker">Pick another resolution: </label>
                     <select id="resolution-picker" class="form-control">
                         <% var resolutions = {0.00555: '~500m', 0.008325: '~750m', 0.0111: '~1km', 0.0222: '~2km', 0.0333: '~3km', 0.0444: '~4km', 0.0555: '~5km'} %>
                         <% $.each(resolutions, function(i, r){ %>
-                            <option value="<%= i %>"<% if(parseFloat(i) === resolution){ %> " selected=true" <% } %>>
+                            <option value="<%= i %>"<% if(parseFloat(i) === resolution){ %> selected=true <% } %>>
                                 <%= r %>
                             </option>
                         <% }) %>
@@ -81,6 +74,8 @@
         </div>
     </script>
     <script src="js/jquery-1.10.1.min.js"></script>
+    <script src="js/range.js" type="text/javascript"></script>
+    <script src="js/moment.min.js" type="text/javascript"></script>
     <script src="js/spin.min.js"></script>
     <script src="js/jquery.spin.js"></script>
     <script src="js/ejs_production.js"></script>
