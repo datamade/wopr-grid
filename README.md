@@ -19,14 +19,14 @@ navigate to http://localhost:8000/
 
 ## Team
 
-* Derek Eder - developer, content
-* Eric van Zanten - developer, GIS data merging
-* Forest Gregg - process design, content
+* Eric van Zanten
+* Derek Eder
+* Forest Gregg
 
 ## Errors / Bugs
 
 If something is not behaving intuitively, it is a bug, and should be reported.
-Report it here: https://github.com/datamade/chicago-lots/issues
+Report it here: https://github.com/datamade/wopr-grid/issues
 
 ## Note on Patches/Pull Requests
  
@@ -37,4 +37,4 @@ Report it here: https://github.com/datamade/chicago-lots/issues
 
 ## Copyright
 
-Copyright (c) 2014 DataMade. Released under the [MIT License](https://github.com/datamade/chicago-lots/blob/master/LICENSE).
+Copyright (c) 2014 DataMade. Released under the [MIT License](https://github.com/datamade/wopr-grid/blob/master/LICENSE).
