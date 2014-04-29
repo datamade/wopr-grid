@@ -2,7 +2,8 @@
 
 Explore geospatially aggregated WOPR datasets
 
-![Crime on a grid](https://dl.dropboxusercontent.com/u/11510165/wopr-grid.png)
+![Crime on a
+grid](https://dl.dropboxusercontent.com/u/11510165/wopr-grid-refresh.png)
 
 ## Running locally
 
