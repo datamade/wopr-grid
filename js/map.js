@@ -2,6 +2,7 @@
     var grid_layer;
     var jenks_cutoffs;
     var endpoint = 'http://wopr.datamade.us/api'
+    //var endpoint = 'http://localhost:5000/api'
     var map = L.map('map').fitBounds([[41.644286009999995, -87.94010087999999], [42.023134979999995, -87.52366115999999]]);
     L.tileLayer('https://{s}.tiles.mapbox.com/v3/datamade.hn83a654/{z}/{x}/{y}.png', {
         attribution: '<a href="http://www.mapbox.com/about/maps/" target="_blank">Terms &amp; Feedback</a>'
@@ -10,7 +11,7 @@
         year: 2013,
         dataset: 'chicago_crimes_all',
         human_name: 'Crimes - 2001 to present',
-        resolution: 0.0111,
+        resolution: 1000,
         obs_from: '2001-01-01',
         obs_to: moment().subtract('days', 7).format('YYYY-MM-DD')
     }
@@ -42,8 +43,9 @@
     loadLayer(grid_data);
     function loadLayer(grid_data){
         $('#map').spin('large');
-        var url = endpoint + '/grid/' + grid_data['year'] + '/'
-        $.when(getGrid(url, grid_data['dataset'], grid_data['resolution'])).then(
+        grid_data['center'] = [map.getCenter().lat, map.getCenter().lng]
+        var url = endpoint + '/grid/'
+        $.when(getGrid(url, grid_data)).then(
             function(grid){
                 $('#map').spin(false);
                 var values = [];
@@ -60,9 +62,10 @@
                     jenks_cutoffs.pop();
                     grid_layer = L.geoJson(grid, {
                         pointToLayer: function(feature, latlng){
-                            var res = grid_data['resolution'] / 2;
-                            var sw = [latlng.lat + res, latlng.lng - res]
-                            var ne = [latlng.lat - res, latlng.lng + res]
+                            var size_x = feature.properties.size_x / 2;
+                            var size_y = feature.properties.size_y / 2;
+                            var sw = [latlng.lat - size_y , latlng.lng - size_x]
+                            var ne = [latlng.lat + size_y, latlng.lng + size_x]
                             var style = styleGrid(feature)
                             return  L.rectangle([sw, ne], style);
                         },
@@ -98,10 +101,12 @@
         };
     }
 
-    function getGrid(url, dataset, resolution){
+    function getGrid(url, grid){
         var data = {
-            dataset_name: dataset,
-            resolution: resolution
+            dataset_name: grid['dataset'],
+            resolution: grid['resolution'],
+            year: grid['year'],
+            center: grid['center'],
         }
         return $.getJSON(url, data)
     }

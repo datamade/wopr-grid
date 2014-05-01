@@ -62,7 +62,7 @@
                 <div class="form-group">
                     <label for="resolution-picker">Pick another resolution: </label>
                     <select id="resolution-picker" class="form-control">
-                        <% var resolutions = {0.00555: '~500m', 0.008325: '~750m', 0.0111: '~1km', 0.0222: '~2km', 0.0333: '~3km', 0.0444: '~4km', 0.0555: '~5km'} %>
+                        <% var resolutions = {500: '~500m', 750: '~750m', 1000: '~1km', 2000: '~2km', 3000: '~3km', 4000: '~4km', 5000: '~5km'} %>
                         <% $.each(resolutions, function(i, r){ %>
                             <option value="<%= i %>"<% if(parseFloat(i) === resolution){ %> selected=true <% } %>>
                                 <%= r %>
