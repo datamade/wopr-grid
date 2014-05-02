@@ -1,8 +1,8 @@
 (function(){
     var grid_layer;
     var jenks_cutoffs;
-    var endpoint = 'http://wopr.datamade.us/api'
-    //var endpoint = 'http://localhost:5000/api'
+    //var endpoint = 'http://wopr.datamade.us/api'
+    var endpoint = 'http://localhost:5000/api'
     var map = L.map('map').fitBounds([[41.644286009999995, -87.94010087999999], [42.023134979999995, -87.52366115999999]]);
     L.tileLayer('https://{s}.tiles.mapbox.com/v3/datamade.hn83a654/{z}/{x}/{y}.png', {
         attribution: '<a href="http://www.mapbox.com/about/maps/" target="_blank">Terms &amp; Feedback</a>'
@@ -61,14 +61,7 @@
                     jenks_cutoffs[0] = 0;
                     jenks_cutoffs.pop();
                     grid_layer = L.geoJson(grid, {
-                        pointToLayer: function(feature, latlng){
-                            var size_x = feature.properties.size_x / 2;
-                            var size_y = feature.properties.size_y / 2;
-                            var sw = [latlng.lat - size_y , latlng.lng - size_x]
-                            var ne = [latlng.lat + size_y, latlng.lng + size_x]
-                            var style = styleGrid(feature)
-                            return  L.rectangle([sw, ne], style);
-                        },
+                        style: styleGrid,
                         onEachFeature: function(feature, layer){
                             var content = '<h4>Count: ' + feature.properties.count + '</h4>';
                             layer.bindLabel(content);
