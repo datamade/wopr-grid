@@ -1,3 +1,10 @@
+$(window).resize(function () {
+    var h = $(window).height(),
+      offsetTop = 105; // Calculate the top offset
+
+    $('#map').css('height', (h - offsetTop));
+}).resize();
+
 (function(){
     var grid_layer;
     var jenks_cutoffs;
@@ -11,11 +18,11 @@
         year: 2013,
         dataset: 'chicago_crimes_all',
         human_name: 'Crimes - 2001 to present',
-        resolution: 1000,
+        resolution: 1000, //in meters
         obs_from: '2001-01-01',
         obs_to: moment().subtract('days', 7).format('YYYY-MM-DD')
     }
-    var legend = L.control({position: 'bottomleft'});
+    var legend = L.control({position: 'bottomright'});
     legend.onAdd = function(map){
         var div = L.DomUtil.create('div', 'legend')
         var labels = [];
@@ -105,14 +112,14 @@
     }
 
     function metaUpdate(grid_data){
-        $('.meta').spin('large');
+        $('#sidebar').spin('large');
         var tpl = new EJS({text: $('#metaControl').html()})
         $.when($.getJSON(endpoint + '/')).then(
             function(datasets){
                 $(self._div).spin(false);
                 grid_data['datasets'] = datasets;
                 var opts = makeYearPicker();
-                $('.meta').html(tpl.render(grid_data));
+                $('#sidebar').html(tpl.render(grid_data));
                 $('#year-picker').html(opts);
                 $('#dataset-picker').on('change', function(e){
                     grid_data['dataset'] = $(this).val();
